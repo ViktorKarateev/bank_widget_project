@@ -6,9 +6,7 @@ def get_mask_card_number(card_number: int) -> str:
     :return: Маскированный номер карты в виде строки.
     """
     card_number_str = str(card_number)  # Преобразуем число в строку
-    masked_number = (
-        f"{card_number_str[:4]} {card_number_str[4:6]}** **** {card_number_str[-4:]}"
-    )
+    masked_number = f"{card_number_str[:4]} {card_number_str[4:6]}** **** {card_number_str[-4:]}"
     return masked_number
 
 
