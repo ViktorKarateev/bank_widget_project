@@ -24,3 +24,10 @@
 
    ```bash
    git clone https://github.com/yourusername/bank_widget_project.git
+
+## Запуск тестов
+
+### Установка зависимостей
+```bash
+pip install -r requirements.txt
+
