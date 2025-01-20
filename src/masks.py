@@ -1,22 +1,21 @@
 import logging
+import os
 
-# Настройка логгера для модуля `masks`
+# Настройка логера для модуля masks
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOG_DIR = os.path.join(BASE_DIR, "logs")
+
+if not os.path.exists(LOG_DIR):
+    raise FileNotFoundError(f"Папка {LOG_DIR} отсутствует. Создайте её перед запуском приложения.")
+
 logger = logging.getLogger("masks")
 logger.setLevel(logging.DEBUG)
 
-# Обработчик для записи логов в файл
-file_handler = logging.FileHandler("logs/masks.log", mode="w", encoding="utf-8")
+file_handler = logging.FileHandler(os.path.join(LOG_DIR, "masks.log"), mode="w", encoding="utf-8")
 file_handler.setLevel(logging.DEBUG)
-
-# Форматтер для логов
-file_formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 file_handler.setFormatter(file_formatter)
-
-# Добавление обработчика к логгеру
 logger.addHandler(file_handler)
-
 
 def get_mask_card_number(card_number: int) -> str:
     """
@@ -25,15 +24,10 @@ def get_mask_card_number(card_number: int) -> str:
     :param card_number: Номер карты в виде числа.
     :return: Маскированный номер карты в виде строки.
     """
-    try:
-        card_number_str = str(card_number)
-        masked_number = f"{card_number_str[:4]} {card_number_str[4:6]}** **** {card_number_str[-4:]}"
-        logger.info(f"Маскирован номер карты: {masked_number}")
-        return masked_number
-    except Exception as e:
-        logger.error(f"Ошибка маскирования карты: {e}")
-        raise
-
+    card_number_str = str(card_number)
+    masked_number = f"{card_number_str[:4]} {card_number_str[4:6]}** **** {card_number_str[-4:]}"
+    logger.info(f"Успешно замаскирован номер карты: {masked_number}")
+    return masked_number
 
 def get_mask_account(account_number: int) -> str:
     """
@@ -42,11 +36,7 @@ def get_mask_account(account_number: int) -> str:
     :param account_number: Номер счета в виде числа.
     :return: Маскированный номер счета в виде строки.
     """
-    try:
-        account_number_str = str(account_number)
-        masked_number = f"**{account_number_str[-4:]}"
-        logger.info(f"Маскирован номер счета: {masked_number}")
-        return masked_number
-    except Exception as e:
-        logger.error(f"Ошибка маскирования счета: {e}")
-        raise
+    account_number_str = str(account_number)
+    masked_number = f"**{account_number_str[-4:]}"
+    logger.info(f"Успешно замаскирован номер счета: {masked_number}")
+    return masked_number
