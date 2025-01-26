@@ -1,0 +1,2 @@
+2025-01-20 20:29:08,519 - utils - INFO - Файл C:\Users\karat\AppData\Local\Temp\pytest-of-karat\pytest-5\test_read_json_file_valid0\operations.json успешно прочитан. Количество записей: 1
+2025-01-20 20:29:08,522 - utils - ERROR - Ошибка чтения файла C:\Users\karat\AppData\Local\Temp\pytest-of-karat\pytest-5\test_read_json_file_empty0\empty.json: Expecting value: line 1 column 1 (char 0)
