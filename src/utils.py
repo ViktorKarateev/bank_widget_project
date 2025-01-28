@@ -1,7 +1,7 @@
+import json
 import logging
 import os
-import json
-from typing import List, Dict
+from typing import Dict, List
 
 # Настройка логера для модуля utils
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

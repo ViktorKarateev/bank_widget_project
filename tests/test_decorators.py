@@ -1,8 +1,9 @@
-import unittest
-from unittest.mock import patch, MagicMock
-from src.decorators import log
 import logging
+import unittest
 from io import StringIO
+from unittest.mock import MagicMock, patch
+
+from src.decorators import log
 
 
 class TestLogDecorator(unittest.TestCase):

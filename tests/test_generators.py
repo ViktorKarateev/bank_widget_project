@@ -1,5 +1,7 @@
 import pytest
+
 from src.generators import filter_by_currency
+
 
 @pytest.mark.parametrize("transactions, currency, expected_count", [
     ([{"operationAmount": {"currency": {"code": "USD"}}}], "USD", 1),
@@ -14,6 +16,7 @@ def test_filter_by_currency(transactions, currency, expected_count):
 
 from src.generators import transaction_descriptions
 
+
 def test_transaction_descriptions():
     transactions = [
         {"description": "Test 1"},
@@ -27,6 +30,7 @@ def test_transaction_descriptions():
 
 
 from src.generators import card_number_generator
+
 
 @pytest.mark.parametrize("start, stop, expected", [
     (1, 1, ["0000 0000 0000 0001"]),
