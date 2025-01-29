@@ -1,5 +1,7 @@
 import pytest
+
 from src.utils import read_json_file
+
 
 @pytest.fixture
 def json_file_path(tmp_path):

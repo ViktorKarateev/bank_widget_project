@@ -1,6 +1,7 @@
-import requests
 import os
 from typing import Dict
+
+import requests
 
 
 def convert_to_rub(transaction: Dict[str, float | str]) -> float:

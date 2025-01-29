@@ -1,5 +1,7 @@
 import pytest
-from src.masks import get_mask_card_number, get_mask_account
+
+from src.masks import get_mask_account, get_mask_card_number
+
 
 @pytest.mark.parametrize("card_number, expected", [
     (1234567812345678, "1234 56** **** 5678"),  # Обычный случай

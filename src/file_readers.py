@@ -13,8 +13,10 @@ def read_csv_file(file_name: str) -> List[Dict]:
     file_path = os.path.join(os.getcwd(), "data", file_name)
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Файл {file_path} не найден.")
+
     try:
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path, delimiter=";", encoding="utf-8")  # ✅ Добавлен delimiter=";"
+        print("🔍 Первые 5 записей из CSV:", df.head(5).to_dict(orient="records"))  # Отладка
         return df.to_dict(orient="records")
     except Exception as e:
         raise ValueError(f"Ошибка при чтении CSV-файла: {e}")
@@ -30,9 +32,10 @@ def read_excel_file(file_name: str) -> List[Dict]:
     file_path = os.path.join(os.getcwd(), "data", file_name)
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Файл {file_path} не найден.")
+
     try:
-        df = pd.read_excel(file_path, engine="openpyxl")
+        df = pd.read_excel(file_path, engine="openpyxl", dtype=str)  # ✅ Добавлен dtype=str
+        print("🔍 Первые 5 записей из Excel:", df.head(5).to_dict(orient="records"))  # Отладка
         return df.to_dict(orient="records")
     except Exception as e:
         raise ValueError(f"Ошибка при чтении Excel-файла: {e}")
-
