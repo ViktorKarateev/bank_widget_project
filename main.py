@@ -4,9 +4,9 @@ from src.file_readers import read_csv_file, read_excel_file
 from src.utils import read_json_file
 from src.search import search_transactions
 from src.category_counter import count_transaction_categories
-from src.processing import filter_by_state, sort_by_date
+from src.processing import sort_by_date
 
-DATA_PATH = "data/"  # Папка с файлами
+DATA_PATH = "data"  # Папка с файлами
 
 
 def load_transactions(file_type: str) -> List[Dict]:
@@ -16,17 +16,14 @@ def load_transactions(file_type: str) -> List[Dict]:
     :return: Список транзакций.
     """
     file_map = {
-        "json": "transactions.json",
+        "json": "operations.json",
         "csv": "transactions.csv",
-        "xlsx": "transactions.xlsx"
+        "xlsx": "transactions_excel.xlsx"
     }
 
-    file_name = file_map.get(file_type)
-    if not file_name:
-        print("Неверный формат. Используйте json, csv или xlsx.")
-        return []
+    file_path = file_map[file_type]
 
-    file_path = os.path.join(DATA_PATH, file_name)
+    print(f"Загружаем файл: {file_path}")  # Отладочный вывод
 
     if file_type == "json":
         return read_json_file(file_path)
@@ -36,43 +33,80 @@ def load_transactions(file_type: str) -> List[Dict]:
         return read_excel_file(file_path)
 
 
+def get_filtered_status(transactions: List[Dict]) -> List[Dict]:
+    """
+    Фильтрует транзакции по статусу, который вводит пользователь.
+    :param transactions: список транзакций
+    :return: отфильтрованный список
+    """
+    valid_statuses = {"EXECUTED", "CANCELED", "PENDING"}
+
+    while True:
+        status = input("Введите статус для фильтрации (EXECUTED, CANCELED, PENDING): ").strip().upper()
+        if status in valid_statuses:
+            filtered_transactions = [txn for txn in transactions if str(txn.get("state", "")).upper() == status]
+            print(f"Операции отфильтрованы по статусу '{status}'.")
+            print(f"🔍 После фильтрации по статусу осталось {len(filtered_transactions)} транзакций.")
+            return filtered_transactions
+        else:
+            print(f"Ошибка: статус '{status}' недоступен. Попробуйте снова.")
+
+
 def main():
     """
     Основная функция программы.
     """
     print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
 
-    # Выбор типа файла
-    file_type = input("Выберите формат файла (json/csv/xlsx): ").strip().lower()
+    while True:
+        print("Выберите необходимый пункт меню:")
+        print("1. Получить информацию о транзакциях из JSON-файла")
+        print("2. Получить информацию о транзакциях из CSV-файла")
+        print("3. Получить информацию о транзакциях из XLSX-файла")
+        choice = input("Введите номер пункта: ").strip()
+        if choice in {"1", "2", "3"}:
+            file_type = {"1": "json", "2": "csv", "3": "xlsx"}[choice]
+            print(f"Для обработки выбран {file_type.upper()}-файл.")
+            break
+        print("Ошибка: выберите 1, 2 или 3.")
+
     transactions = load_transactions(file_type)
+    print(f"🔍 Загружено {len(transactions)} транзакций до фильтрации.")
+    for txn in transactions[:5]:
+        print(txn)
 
     if not transactions:
         print("Ошибка загрузки данных.")
         return
 
     # Фильтрация по статусу
-    status = input("Введите статус для фильтрации (EXECUTED, CANCELED, PENDING): ").strip().upper()
-    transactions = filter_by_state(transactions, status)
-    print(f"Операции отфильтрованы по статусу '{status}'.")
+    transactions = get_filtered_status(transactions)
 
     # Сортировка по дате
     if input("Отсортировать операции по дате? Да/Нет: ").strip().lower() == "да":
-        order = input("Сортировать по убыванию? (Да/Нет): ").strip().lower() == "да"
+        order = input("Отсортировать по возрастанию или по убыванию? ").strip().lower() == "по убыванию"
         transactions = sort_by_date(transactions, order)
 
-    # Фильтрация по ключевому слову
-    if input("Фильтровать по описанию? Да/Нет: ").strip().lower() == "да":
-        keyword = input("Введите слово для поиска: ").strip()
+    # Фильтрация по валюте
+    if input("Выводить только рублевые транзакции? Да/Нет: ").strip().lower() == "да":
+        transactions = [txn for txn in transactions if txn.get("currency", "").upper() == "RUB"]
+    print(f"🔍 После фильтрации по валюте осталось {len(transactions)} транзакций.")
+
+    # Фильтрация по описанию
+    if input("Отфильтровать список транзакций по определенному слову в описании? Да/Нет: ").strip().lower() == "да":
+        keyword = input("Введите слово для фильтрации: ").strip()
         transactions = search_transactions(transactions, keyword)
 
     # Вывод транзакций
+    print("\nРаспечатываю итоговый список транзакций...")
     if transactions:
-        print(f"\nВсего операций: {len(transactions)}")
+        print(f"\nВсего банковских операций в выборке: {len(transactions)}")
         for txn in transactions:
             print(
-                f"{txn.get('date', 'Неизвестно')} | {txn.get('description', 'Нет описания')} | {txn.get('amount', 'Нет суммы')} {txn.get('currency', 'Неизвестно')}")
+                f"{txn.get('date', 'Неизвестно')} {txn.get('description', 'Нет описания')}")
+            print(f"Сумма: {txn.get('amount', 'Нет суммы')} {txn.get('currency', 'Неизвестно')}")
     else:
-        print("Не найдено ни одной транзакции по заданным критериям.")
+        print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации.")
 
     # Подсчет категорий
     category_counts = count_transaction_categories(transactions)
